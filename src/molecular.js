@@ -37,9 +37,46 @@ export const MOLECULES = {
     formula: 'NH3',
     atoms: ['N', 'H', 'H', 'H'],
     bonds: [[0, 1, 1], [0, 2, 1], [0, 3, 1]],
-    internal: [],
+    internal: [
+      { refs: [] },
+      { refs: [0], r: 1.012 },
+      { refs: [0, 1], r: 1.012, angle: 106.7 },
+      { refs: [0, 1, 2], r: 1.012, angle: 106.7, dihedral: 120 }
+    ],
     viewer: [[0, 0, 0], [0.937, 0, 0.382], [-0.4685, 0.8113, 0.382], [-0.4685, -0.8113, 0.382]],
-    description: 'Trigonal pyramidal · simplified teaching geometry'
+    description: 'Trigonal pyramidal · N–H bond length ≈ 1.012 Å'
+  },
+  boronTrifluoride: {
+    name: 'Boron trifluoride',
+    formula: 'BF3',
+    atoms: ['B', 'F', 'F', 'F'],
+    bonds: [[0, 1, 1], [0, 2, 1], [0, 3, 1]],
+    internal: [
+      { refs: [] },
+      { refs: [0], r: 1.31 },
+      { refs: [0, 1], r: 1.31, angle: 120 },
+      { refs: [0, 1, 2], r: 1.31, angle: 120, dihedral: 120 }
+    ],
+    viewer: [[0, 0, 0], [1.31, 0, 0], [-0.655, 1.1347, 0], [-0.655, -1.1347, 0]],
+    description: 'Trigonal planar · F–B–F angle = 120°'
+  },
+  sulfurHexafluoride: {
+    name: 'Sulfur hexafluoride',
+    formula: 'SF6',
+    atoms: ['S', 'F', 'F', 'F', 'F', 'F', 'F'],
+    bonds: [[0, 1, 1], [0, 2, 1], [0, 3, 1], [0, 4, 1], [0, 5, 1], [0, 6, 1]],
+    internal: [],
+    viewer: [[0, 0, 0], [1.56, 0, 0], [-1.56, 0, 0], [0, 1.56, 0], [0, -1.56, 0], [0, 0, 1.56], [0, 0, -1.56]],
+    description: 'Octahedral · S–F bond length ≈ 1.56 Å'
+  },
+  phosphorusPentachloride: {
+    name: 'Phosphorus pentachloride',
+    formula: 'PCl5',
+    atoms: ['P', 'Cl', 'Cl', 'Cl', 'Cl', 'Cl'],
+    bonds: [[0, 1, 1], [0, 2, 1], [0, 3, 1], [0, 4, 1], [0, 5, 1]],
+    internal: [],
+    viewer: [[0, 0, 0], [0, 0, 2.14], [0, 0, -2.14], [2.02, 0, 0], [-1.01, 1.7495, 0], [-1.01, -1.7495, 0]],
+    description: 'Trigonal bipyramidal · axial/equatorial P–Cl ≈ 2.14/2.02 Å'
   },
   formaldehyde: {
     name: 'Formaldehyde',
@@ -134,7 +171,7 @@ export function formatPdb(molecule, points) {
   validateCoordinates(molecule.atoms, points);
   const atomLines = molecule.atoms.map((element, index) => {
     const [x, y, z] = points[index];
-    return `HETATM${String(index + 1).padStart(5)} ${`${element}${index + 1}`.padEnd(4)} MOL A   1    ${x.toFixed(3).padStart(8)}${y.toFixed(3).padStart(8)}${z.toFixed(3).padStart(8)}  1.00  0.00          ${element.padStart(2)}  `;
+    return `HETATM${String(index + 1).padStart(5)} ${`${element}${index + 1}`.padEnd(4)} MOL A   1    ${x.toFixed(3).padStart(8)}${y.toFixed(3).padStart(8)}${z.toFixed(3).padStart(8)}  1.00  0.00          ${element.padEnd(2)}  `;
   });
   const neighbors = molecule.atoms.map(() => []);
   molecule.bonds.forEach(([a, b]) => {
@@ -152,7 +189,7 @@ export function formatMol(molecule, points) {
   const bonds = molecule.bonds;
   const header = `${molecule.name}\n  Molecular Geometry Lab\n\n${String(molecule.atoms.length).padStart(3)}${String(bonds.length).padStart(3)}  0  0  0  0            999 V2000`;
   const atomLines = molecule.atoms.map((element, index) =>
-    `${points[index].map((value) => value.toFixed(4).padStart(10)).join('')} ${element.padEnd(3)} 0  0  0  0  0  0  0  0  0  0  0  0`
+    `${points[index].map((value) => value.toFixed(4).padStart(10)).join('')} ${element.padEnd(3)} 0  0  0  0  0  0  0  0  0  0  0  0  0`
   );
   const bondLines = bonds.map(([a, b, order]) =>
     `${String(a + 1).padStart(3)}${String(b + 1).padStart(3)}${String(order).padStart(3)}  0  0  0  0`
